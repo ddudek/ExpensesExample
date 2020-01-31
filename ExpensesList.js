@@ -24,6 +24,20 @@ const ExpensesList: () => React$Node = props => {
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
+        {!props.loading && (
+          <FlatList
+            data={props.expenses}
+            renderItem={({item, index}) => {
+              return (
+                <Text style={styles.item}>
+                  {index}.{item.id}
+                </Text>
+              );
+            }}
+            keyExtractor={item => item.id}
+          />
+        )}
+
         <View
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
@@ -37,20 +51,6 @@ const ExpensesList: () => React$Node = props => {
                 <Text style={styles.sectionDescription}>
                   {props.expenses.length}
                 </Text>
-              )}
-
-              {!props.loading && (
-                <FlatList
-                  data={props.expenses}
-                  renderItem={({item, index}) => {
-                    return (
-                      <Text style={styles.item}>
-                        {index}.{item.id}
-                      </Text>
-                    );
-                  }}
-                  keyExtractor={item => item.id}
-                />
               )}
 
               {props.loading && (
