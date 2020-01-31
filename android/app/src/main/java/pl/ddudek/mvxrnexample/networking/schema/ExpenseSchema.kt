@@ -10,6 +10,6 @@ data class ExpenseSchema(
         @SerializedName("date") val date: String,
         @SerializedName("id") val id: String,
         @SerializedName("merchant") val merchant: String,
-        @SerializedName("receipts") val receipts: List<Any>,
+        @SerializedName("receipts") val receipts: List<UserSchema>,
         @SerializedName("user") val user: UserSchema
 )

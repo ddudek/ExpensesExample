@@ -15,7 +15,7 @@ fun ExpenseSchema.mapToModel(): Expense {
             date = this.date,
             id = this.id,
             merchant = this.merchant,
-            receipts = this.receipts,
+            receipts = this.receipts.map { it.mapToModel() },
             user = this.user.mapToModel()
     )
 }

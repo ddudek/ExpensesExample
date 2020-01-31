@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android --appId pl.ddudek.mvxrnexample --main-activity pl.ddudek.mvxrnexample.view.MainActivity",
+    "android": "react-native run-android --appId pl.ddudek.mvxrnexample --main-activity view.MainActivity",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
