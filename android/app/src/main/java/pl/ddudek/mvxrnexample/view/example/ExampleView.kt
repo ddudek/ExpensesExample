@@ -1,12 +1,14 @@
-package pl.ddudek.mvxrnexample.view
+package pl.ddudek.mvxrnexample.view.example
 
 import android.view.View
+import pl.ddudek.mvxrnexample.view.common.BaseView
 
-interface ExampleView {
+interface ExampleView : BaseView {
+    override fun getRootView(): View
+    override fun destroy()
+
     fun onCreated(initialState: ViewState?)
-    fun getRootView(): View
     fun applyViewState(state: ViewState)
-    fun destroy()
 
     data class ViewState (
             val title: String,

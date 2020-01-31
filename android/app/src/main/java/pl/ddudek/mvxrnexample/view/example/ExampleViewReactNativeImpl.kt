@@ -1,4 +1,4 @@
-package pl.ddudek.mvxrnexample.view
+package pl.ddudek.mvxrnexample.view.example
 
 import android.content.Context
 import android.os.Bundle

@@ -2,16 +2,17 @@ package pl.ddudek.mvxrnexample.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import pl.ddudek.mvxrnexample.exampledata.ExampleDataUseCase
+import pl.ddudek.mvxrnexample.expenselist.GetExpenseListUseCase
+import pl.ddudek.mvxrnexample.view.example.ExampleView
+import pl.ddudek.mvxrnexample.view.example.ExampleViewAndroidImpl
+import pl.ddudek.mvxrnexample.view.example.ExampleViewReactNativeImpl
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var view: ExampleView
-    private val useCase = ExampleDataUseCase()
+    private val useCase = GetExpenseListUseCase()
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -35,7 +36,8 @@ class MainActivity : AppCompatActivity() {
         var disposable = useCase.run()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ data ->
-                    view.applyViewState(ExampleView.ViewState(data.title, data.subtitle, error = null, loading = false))
+                    var expense = data[0]
+                    view.applyViewState(ExampleView.ViewState(expense.merchant, expense.user.first, error = null, loading = false))
                 }, { error ->
                     view.applyViewState(ExampleView.ViewState("", "", error = "Loading data failed, please try again. \n Details: ${error.message}", loading = false))
                 })

@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="state"
-            type="pl.ddudek.mvxrnexample.view.ExampleView.ViewState" />
+            type="pl.ddudek.mvxrnexample.view.example.ExampleView.ViewState" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

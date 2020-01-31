@@ -1,4 +1,4 @@
-package pl.ddudek.mvxrnexample.view
+package pl.ddudek.mvxrnexample.view.example
 
 import android.view.LayoutInflater
 import android.view.View
