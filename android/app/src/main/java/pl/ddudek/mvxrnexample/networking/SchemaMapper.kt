@@ -9,11 +9,11 @@ import pl.ddudek.mvxrnexample.networking.schema.UserSchema
 
 fun ExpenseSchema.mapToModel(): Expense {
     return Expense(
+            id = this.id,
             amount = this.amount.mapToModel(),
             category = this.category,
             comment = this.comment,
             date = this.date,
-            id = this.id,
             merchant = this.merchant,
             receipts = this.receipts.map { it.mapToModel() },
             user = this.user.mapToModel()

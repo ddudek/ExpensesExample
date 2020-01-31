@@ -14,6 +14,7 @@ import {
   View,
   Text,
   StatusBar,
+  FlatList,
 } from 'react-native';
 
 import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
@@ -23,7 +24,7 @@ const ExpensesList: () => React$Node = props => {
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
-        <ScrollView
+        <View
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
           <View style={styles.body}>
@@ -38,12 +39,31 @@ const ExpensesList: () => React$Node = props => {
                 </Text>
               )}
 
+              {!props.loading && (
+                <FlatList
+                  data={props.expenses}
+                  renderItem={({item, index}) => {
+                    return (
+                      <Text style={styles.item}>
+                        {index}.{item.id}
+                      </Text>
+                    );
+                  }}
+                  keyExtractor={item => item.id}
+                />
+              )}
+
               {props.loading && (
                 <Text style={styles.sectionDescription}>Loading...</Text>
               )}
+              {props.error != null && (
+                <Text style={styles.sectionDescription}>
+                  Error: {props.error}
+                </Text>
+              )}
             </View>
           </View>
-        </ScrollView>
+        </View>
       </SafeAreaView>
     </>
   );
@@ -89,6 +109,12 @@ const styles = StyleSheet.create({
     padding: 4,
     paddingRight: 12,
     textAlign: 'right',
+  },
+  item: {
+    color: Colors.dark,
+    fontSize: 12,
+    fontWeight: '600',
+    padding: 8,
   },
 });
 

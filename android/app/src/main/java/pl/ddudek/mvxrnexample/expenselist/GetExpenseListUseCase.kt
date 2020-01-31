@@ -3,18 +3,18 @@ package pl.ddudek.mvxrnexample.expenselist
 import com.google.gson.Gson
 import io.reactivex.Single
 import pl.ddudek.mvxrnexample.model.Expense
+import pl.ddudek.mvxrnexample.networking.ExpensesApi
 import pl.ddudek.mvxrnexample.networking.mapToModel
 import pl.ddudek.mvxrnexample.networking.schema.ExpenseSchema
-import java.util.concurrent.TimeUnit
 
-class GetExpenseListUseCase {
+
+class GetExpenseListUseCase(val api: ExpensesApi) {
     fun run() : Single<List<Expense>> {
-        return Single
-                .just(createSampleExpense())
+        return api.getExpensesList()
+                .map { it.expenses }
                 .flattenAsObservable { it}
                 .map { it.mapToModel() }
                 .toList()
-                .delay(5, TimeUnit.SECONDS)
     }
 
     private fun createSampleExpense(): List<ExpenseSchema> {
