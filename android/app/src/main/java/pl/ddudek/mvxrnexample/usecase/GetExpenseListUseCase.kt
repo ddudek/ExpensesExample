@@ -1,4 +1,4 @@
-package pl.ddudek.mvxrnexample.expenselist
+package pl.ddudek.mvxrnexample.usecase
 
 import com.google.gson.Gson
 import io.reactivex.Single
@@ -6,6 +6,7 @@ import pl.ddudek.mvxrnexample.model.Expense
 import pl.ddudek.mvxrnexample.networking.ExpensesApi
 import pl.ddudek.mvxrnexample.networking.mapToModel
 import pl.ddudek.mvxrnexample.networking.schema.ExpenseSchema
+import java.util.concurrent.TimeUnit
 
 
 class GetExpenseListUseCase(val api: ExpensesApi) {
@@ -15,6 +16,7 @@ class GetExpenseListUseCase(val api: ExpensesApi) {
                 .flattenAsObservable { it}
                 .map { it.mapToModel() }
                 .toList()
+                .delay(5, TimeUnit.SECONDS)
     }
 
     private fun createSampleExpense(): List<ExpenseSchema> {

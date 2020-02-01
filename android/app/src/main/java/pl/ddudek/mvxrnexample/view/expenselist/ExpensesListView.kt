@@ -2,8 +2,9 @@ package pl.ddudek.mvxrnexample.view.expenselist
 
 import pl.ddudek.mvxrnexample.model.Expense
 import pl.ddudek.mvxrnexample.view.common.BaseView
+import pl.ddudek.mvxrnexample.view.common.ObservableBaseView
 
-interface ExpensesListView : BaseView {
+interface ExpensesListView : ObservableBaseView<ExpensesListView.ViewListener> {
 
     fun onCreated(initialState: ViewState?)
     fun applyViewState(state: ViewState)
@@ -13,4 +14,8 @@ interface ExpensesListView : BaseView {
             val error: String?,
             val loading: Boolean
     )
+
+    interface ViewListener {
+        fun onExpenseItemClicked(id: String)
+    }
 }

@@ -10,43 +10,69 @@ import React from 'react';
 import {
   SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
   StatusBar,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
+import NativeCallbacksBridge from './NativeCallbacksBridge';
+import {format, parseISO} from 'date-fns';
+import {DeviceEventEmitter} from 'react-native';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
-import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
+interface Props {
+  expenses: object;
+  loading: Boolean;
+  error: String | null;
+}
+
+interface State {
+  expenses: object;
+  loading: Boolean;
+  error: String | null;
+}
 
 const ExpensesList: () => React$Node = props => {
+  const onItemPressed = obj => {
+    NativeCallbacksBridge.onExpenseItemClicked(obj.id);
+  };
+
+  const renderItem = ({item, index}) => {
+    return (
+      <TouchableOpacity onPress={() => onItemPressed(item)}>
+        <View style={styles.itemContainer}>
+          <Text style={styles.itemName}>
+            {item.user.first} {item.user.last}
+          </Text>
+          <Text style={styles.itemEmail}>{item.user.email}</Text>
+          <Text style={styles.itemPrice}>
+            {item.amount.value} {item.amount.currency}
+          </Text>
+          <Text style={styles.itemDate}>
+            {format(parseISO(item.date), 'MMM do, yyyy H:mma')}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
-        {!props.loading && (
-          <FlatList
-            data={props.expenses}
-            renderItem={({item, index}) => {
-              return (
-                <Text style={styles.item}>
-                  {index}.{item.id}
-                </Text>
-              );
-            }}
-            keyExtractor={item => item.id}
-          />
-        )}
-
         <View
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
           <View style={styles.body}>
-            <Text style={styles.sectionTitle}>Expenses List</Text>
+            {!props.loading && (
+              <FlatList
+                data={props.expenses}
+                renderItem={renderItem}
+                keyExtractor={item => item.id}
+              />
+            )}
             <View style={styles.sectionContainerCentered}>
-              {!props.loading && (
-                <Text style={styles.sectionDescription}>Loaded</Text>
-              )}
               {!props.loading && (
                 <Text style={styles.sectionDescription}>
                   {props.expenses.length}
@@ -70,13 +96,6 @@ const ExpensesList: () => React$Node = props => {
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
   body: {
     backgroundColor: Colors.white,
   },
@@ -110,11 +129,37 @@ const styles = StyleSheet.create({
     paddingRight: 12,
     textAlign: 'right',
   },
-  item: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
+  itemContainer: {
     padding: 8,
+    marginHorizontal: 8,
+    marginBottom: 8,
+    backgroundColor: Colors.light,
+  },
+  itemName: {
+    color: Colors.black,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  itemEmail: {
+    color: Colors.dark,
+    fontSize: 10,
+    fontWeight: 'normal',
+  },
+  itemPrice: {
+    color: Colors.black,
+    fontSize: 14,
+    fontWeight: '600',
+    position: 'absolute',
+    right: 8,
+    top: 8,
+  },
+  itemDate: {
+    color: Colors.dark,
+    fontSize: 10,
+    fontWeight: '600',
+    position: 'absolute',
+    right: 8,
+    bottom: 8,
   },
 });
 
