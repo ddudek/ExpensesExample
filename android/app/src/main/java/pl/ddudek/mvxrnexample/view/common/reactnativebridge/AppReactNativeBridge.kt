@@ -1,6 +1,8 @@
 package pl.ddudek.mvxrnexample.view.common.reactnativebridge
 
-class NativeCallbacksBridgeListeners {
+import com.facebook.react.bridge.ReadableMap
+
+class AppReactNativeBridge {
     val listeners = mutableSetOf<NativeCallbacksBridgeListener>()
 
     fun registerListener(listener: NativeCallbacksBridgeListener) {
@@ -12,6 +14,6 @@ class NativeCallbacksBridgeListeners {
     }
 
     interface NativeCallbacksBridgeListener {
-        fun onExpenseItemClicked(id: String)
+        fun onExpenseItemClicked(args: ReadableMap)
     }
 }

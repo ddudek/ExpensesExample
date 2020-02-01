@@ -8,6 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import pl.ddudek.mvxrnexample.MainApplication
+import pl.ddudek.mvxrnexample.model.Expense
 import pl.ddudek.mvxrnexample.usecase.GetExpenseListUseCase
 import pl.ddudek.mvxrnexample.view.expensedetails.ExpenseDetailsActivity
 import pl.ddudek.mvxrnexample.view.expenselist.ExpensesListView
@@ -28,9 +29,9 @@ class MainActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
         useCase = GetExpenseListUseCase(appComponent.api)
         view = ExpensesListViewFragmentImpl(this.supportFragmentManager, appComponent.bridgeCallbackListeners, layoutInflater)
         viewListener = object : ExpensesListView.ViewListener {
-            override fun onExpenseItemClicked(id: String) {
+            override fun onExpenseItemClicked(expense: Expense) {
                 val intent = Intent(this@MainActivity, ExpenseDetailsActivity::class.java)
-                intent.putExtra("id", id)
+                intent.putExtra("expense", expense)
                 startActivity(intent)
             }
         }

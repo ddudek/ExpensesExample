@@ -2,7 +2,7 @@ package pl.ddudek.mvxrnexample.di
 
 import com.google.gson.GsonBuilder
 import pl.ddudek.mvxrnexample.networking.ExpensesApi
-import pl.ddudek.mvxrnexample.view.common.reactnativebridge.NativeCallbacksBridgeListeners
+import pl.ddudek.mvxrnexample.view.common.reactnativebridge.AppReactNativeBridge
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -11,7 +11,7 @@ class ApplicationComponent {
 
     val api: ExpensesApi
 
-    val bridgeCallbackListeners = NativeCallbacksBridgeListeners()
+    val bridgeCallbackListeners = AppReactNativeBridge()
 
     constructor() {
         val gson = GsonBuilder()

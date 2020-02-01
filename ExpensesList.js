@@ -35,7 +35,7 @@ interface State {
 
 const ExpensesList: () => React$Node = props => {
   const onItemPressed = obj => {
-    NativeCallbacksBridge.onExpenseItemClicked(obj.id);
+    NativeCallbacksBridge.onExpenseItemClicked(obj);
   };
 
   const renderItem = ({item, index}) => {

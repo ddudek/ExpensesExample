@@ -3,18 +3,21 @@ package pl.ddudek.mvxrnexample.view.expenselist
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.fragment.app.FragmentManager
+import com.facebook.react.bridge.ReadableMap
 import pl.ddudek.mvxrnexample.view.common.ReactNativeBaseView
-import pl.ddudek.mvxrnexample.view.common.reactnativebridge.NativeCallbacksBridgeListeners
+import pl.ddudek.mvxrnexample.view.common.reactnativebridge.AppReactNativeBridge
 import pl.ddudek.mvxrnexample.view.expenselist.mapper.mapToBundle
+import pl.ddudek.mvxrnexample.view.expenselist.mapper.mapToExpense
 
-class ExpensesListViewFragmentImpl(fragmentManager: FragmentManager, listeners: NativeCallbacksBridgeListeners, layoutInflater: LayoutInflater) :
-        ReactNativeBaseView<ExpensesListView.ViewListener, ExpensesListView.ViewState>(fragmentManager, layoutInflater, listeners),
+class ExpensesListViewFragmentImpl(fragmentManager: FragmentManager, bridge: AppReactNativeBridge, layoutInflater: LayoutInflater) :
+        ReactNativeBaseView<ExpensesListView.ViewListener, ExpensesListView.ViewState>(fragmentManager, layoutInflater, bridge),
         ExpensesListView {
 
-    private val rnCallbacksListener = object : NativeCallbacksBridgeListeners.NativeCallbacksBridgeListener {
-        override fun onExpenseItemClicked(id: String) {
+    private val rnBridgeListener = object : AppReactNativeBridge.NativeCallbacksBridgeListener {
+        override fun onExpenseItemClicked(args: ReadableMap) {
+            val expense = args.mapToExpense()
             for (listener in viewListeners) {
-                listener.onExpenseItemClicked(id)
+                listener.onExpenseItemClicked(expense)
             }
         }
     }
@@ -23,11 +26,11 @@ class ExpensesListViewFragmentImpl(fragmentManager: FragmentManager, listeners: 
 
     override fun onCreated(initialState: ExpensesListView.ViewState?) {
         super.onCreated(initialState)
-        bridgeCallbackListeners.registerListener(rnCallbacksListener)
+        bridge.registerListener(rnBridgeListener)
     }
 
     override fun destroy() {
-        bridgeCallbackListeners.unregisterListener(rnCallbacksListener)
+        bridge.unregisterListener(rnBridgeListener)
     }
 
     override fun bundleState(viewState: ExpensesListView.ViewState): Bundle {

@@ -4,8 +4,6 @@ import android.view.View
 import pl.ddudek.mvxrnexample.view.common.BaseView
 
 interface ExampleView : BaseView {
-    override fun getRootView(): View
-    override fun destroy()
 
     fun onCreated(initialState: ViewState?)
     fun applyViewState(state: ViewState)

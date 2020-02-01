@@ -8,16 +8,16 @@ import androidx.fragment.app.FragmentManager
 import com.facebook.react.ReactFragment
 import pl.ddudek.mvxrnexample.R
 import pl.ddudek.mvxrnexample.databinding.ViewRnFragmentBinding
-import pl.ddudek.mvxrnexample.view.common.reactnativebridge.NativeCallbacksBridgeListeners
+import pl.ddudek.mvxrnexample.view.common.reactnativebridge.AppReactNativeBridge
 
 
 abstract class ReactNativeBaseView<ViewListenerType, ViewStateType>(
         private val supportFragmentManager: FragmentManager,
         layoutInflater: LayoutInflater,
-        listeners: NativeCallbacksBridgeListeners) :
+        bridge: AppReactNativeBridge) :
         ObservableBaseViewImpl<ViewListenerType>() {
 
-    protected var bridgeCallbackListeners: NativeCallbacksBridgeListeners = listeners
+    protected var bridge: AppReactNativeBridge = bridge
     private val viewBinding: ViewRnFragmentBinding = DataBindingUtil.inflate(layoutInflater, R.layout.view_rn_fragment, null, false)
     private lateinit var reactFragment: ReactFragment
 

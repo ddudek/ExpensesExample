@@ -16,6 +16,6 @@ interface ExpensesListView : ObservableBaseView<ExpensesListView.ViewListener> {
     )
 
     interface ViewListener {
-        fun onExpenseItemClicked(id: String)
+        fun onExpenseItemClicked(expense: Expense)
     }
 }

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="listener"
+            type="pl.ddudek.mvxrnexample.view.expensedetails.ExpenseDetailsViewImpl.ViewBindingListener" />
+
+        <variable
+            name="state"
+            type="pl.ddudek.mvxrnexample.view.expensedetails.ExpenseDetailsView.ViewState" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        tools:context=".view.expensedetails.ExpenseDetailsActivity">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="4dp"
+            android:text="@{state.expense.user.first + ' ' + state.expense.user.last}"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/subtitle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="John Example" />
+
+        <TextView
+            android:id="@+id/amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{state.expense.amount.value + ' ' + state.expense.amount.currency}"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/title"
+            tools:text="10.00 PLN" />
+
+        <TextView
+            android:id="@+id/subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@{state.expense.user.email}"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            tools:text="john@example.com" />
+
+        <TextView
+            android:id="@+id/comments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Comments:"
+            app:layout_constraintTop_toBottomOf="@+id/subtitle" />
+
+
+        <TextView
+            android:id="@+id/commentsContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:minHeight="100dp"
+            android:text="@{state.expense.comment}"
+            tools:text="Some comments"
+            android:textSize="10sp"
+            android:background="#f0f0f0"
+            app:layout_constraintTop_toBottomOf="@+id/comments" />
+
+        <ImageButton
+            android:id="@+id/edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_edit_black_24dp"
+            android:onClick="@{listener::onEditClicked}"
+            android:visibility="@{state.editing ? View.GONE : View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/comments" />
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="#eeeeee"
+            android:minHeight="100dp"
+            android:textSize="10sp"
+            android:gravity="top"
+            app:layout_constraintTop_toBottomOf="@+id/comments"
+            android:enabled="@{!state.loading}"
+            android:visibility="@{state.editing ? View.VISIBLE : View.GONE}" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/expense_details_save"
+            android:onClick="@{listener::onSaveClicked}"
+            app:layout_constraintEnd_toEndOf="@+id/editText"
+            app:layout_constraintTop_toBottomOf="@+id/editText"
+            android:visibility="@{state.editing &amp; !state.loading ? View.VISIBLE : View.GONE}"/>
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/expense_details_cancel"
+            android:onClick="@{listener::onCancelClicked}"
+            app:layout_constraintEnd_toStartOf="@+id/saveButton"
+            app:layout_constraintTop_toBottomOf="@+id/editText"
+            android:visibility="@{state.editing &amp; !state.loading ? View.VISIBLE : View.GONE}"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{state.loading ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

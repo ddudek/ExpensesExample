@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MvxRNExample</string>
+    <string name="expense_details_save">Save</string>
+    <string name="expense_details_cancel">Cancel</string>
 </resources>

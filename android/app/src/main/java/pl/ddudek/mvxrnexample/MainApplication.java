@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import pl.ddudek.mvxrnexample.di.ApplicationComponent;
-import pl.ddudek.mvxrnexample.view.common.reactnativebridge.NativeCallbacksBridgePackage;
+import pl.ddudek.mvxrnexample.view.common.reactnativebridge.AppReactNativeBridgePackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -30,7 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
                 protected List<ReactPackage> getPackages() {
                     @SuppressWarnings("UnnecessaryLocalVariable")
                     List<ReactPackage> packages = new PackageList(this).getPackages();
-                    packages.add(new NativeCallbacksBridgePackage(appComponent.getBridgeCallbackListeners()));
+                    packages.add(new AppReactNativeBridgePackage(appComponent.getBridgeCallbackListeners()));
                     return packages;
                 }
 

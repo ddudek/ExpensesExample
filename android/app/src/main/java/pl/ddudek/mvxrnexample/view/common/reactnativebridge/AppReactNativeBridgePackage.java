@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class NativeCallbacksBridgePackage implements ReactPackage {
+public class AppReactNativeBridgePackage implements ReactPackage {
 
-  private NativeCallbacksBridgeListeners listeners;
+  private AppReactNativeBridge listeners;
 
-  public NativeCallbacksBridgePackage(NativeCallbacksBridgeListeners listeners) {
+  public AppReactNativeBridgePackage(AppReactNativeBridge listeners) {
     this.listeners = listeners;
   }
 
@@ -27,7 +27,7 @@ public class NativeCallbacksBridgePackage implements ReactPackage {
                               ReactApplicationContext reactContext) {
     List<NativeModule> modules = new ArrayList<>();
 
-    modules.add(new NativeCallbacksBridgeModule(reactContext, listeners));
+    modules.add(new AppReactNativeBridgeModule(reactContext, listeners));
 
     return modules;
   }
