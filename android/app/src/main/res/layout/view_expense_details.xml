@@ -6,6 +6,7 @@
     <data>
 
         <import type="android.view.View" />
+        <import type="java.text.SimpleDateFormat" />
 
         <variable
             name="listener"
@@ -41,12 +42,12 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:background="#f0f0f0"
             android:onClick="@{listener::onAddReceiptClicked}"
             android:scaleType="center"
-            android:src="@drawable/ic_add_black_64dp"
+            android:src="@{state.uploadingReceipt? null : @drawable/ic_add_black_64dp}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
         <ProgressBar
@@ -61,33 +62,80 @@
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="4dp"
             android:text="@{state.expense.user.first + ' ' + state.expense.user.last}"
-            android:textSize="24sp"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/subtitle"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/receipt"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:text="John Example" />
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+            tools:text="John Example"/>
 
         <TextView
             android:id="@+id/subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:text="@{state.expense.user.email}"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title"
             tools:text="john@example.com" />
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="50dp"
+            android:layout_height="1px"
+            android:background="#cccccc"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/subtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/merchant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@{state.expense.merchant}"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider1"
+            tools:text="at MERCHANT" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:bindDate="@{state.expense.date}"
+            android:textSize="12sp"
+            app:layout_constraintTop_toBottomOf="@+id/merchant"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="12:35 AM" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="50dp"
+            android:layout_height="1px"
+            android:background="#cccccc"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/receipt"
+            app:layout_constraintStart_toStartOf="parent"
+            />
 
         <TextView
             android:id="@+id/comments"
@@ -97,9 +145,10 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:text="@string/details_comments_label"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/subtitle" />
+            app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
 
         <TextView
@@ -112,7 +161,8 @@
             android:background="#f0f0f0"
             android:minHeight="100dp"
             android:text="@{state.expense.comment}"
-            android:textSize="10sp"
+            android:visibility="@{state.editing ? View.GONE : View.VISIBLE}"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/comments"
@@ -122,12 +172,13 @@
             android:id="@+id/edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:onClick="@{listener::onEditClicked}"
             android:src="@drawable/ic_edit_black_24dp"
             android:visibility="@{state.editing ? View.GONE : View.VISIBLE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/comments" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp"
+            app:layout_constraintEnd_toEndOf="@+id/commentsContent"
+            app:layout_constraintTop_toTopOf="@+id/commentsContent" />
 
         <EditText
             android:id="@+id/editText"
@@ -140,7 +191,7 @@
             android:enabled="@{!state.savingComment}"
             android:gravity="top"
             android:minHeight="100dp"
-            android:textSize="10sp"
+            android:textSize="12sp"
             android:visibility="@{state.editing ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -172,11 +223,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{state.savingComment ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="@+id/commentsContent"
+            app:layout_constraintBottom_toBottomOf="@+id/editText"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/comments" />
+            app:layout_constraintTop_toTopOf="@+id/editText" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

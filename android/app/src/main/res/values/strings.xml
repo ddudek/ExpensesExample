@@ -4,4 +4,5 @@
     <string name="expense_details_save">Save</string>
     <string name="expense_details_cancel">Cancel</string>
     <string name="details_comments_label">Comments:</string>
+    <string name="merchant_at">at %s</string>
 </resources>

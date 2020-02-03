@@ -12,16 +12,13 @@ import {
   StyleSheet,
   View,
   Text,
-  StatusBar,
   FlatList,
   TouchableOpacity,
-  TouchableHighlight,
   NativeModules,
   NativeEventEmitter,
 } from 'react-native';
 import NativeCallbacksBridge from './NativeCallbacksBridge';
-import {format, parseISO, min} from 'date-fns';
-import {DeviceEventEmitter} from 'react-native';
+import {format, parseISO} from 'date-fns';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import FilterItem from './FilterItem';
 

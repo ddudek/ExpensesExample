@@ -22,16 +22,15 @@ export default class FilterItem extends React.PureComponent<Props, State> {
   render = () => {
     return (
       <TouchableHighlight
-        style={{margin: 5, borderRadius: 5}}
+        style={styles.container}
         underlayColor={this.props.selected ? Colors.light : Colors.dark}
         onPress={() => this.onPressed()}>
         <View
-          style={{
-            borderRadius: 5,
-            backgroundColor: this.props.selected
-              ? Colors.primary
-              : Colors.lighter,
-          }}>
+          style={
+            this.props.selected
+              ? styles.backgroundSelected
+              : styles.backgroundNormal
+          }>
           <Text
             style={
               this.props.selected
@@ -47,6 +46,18 @@ export default class FilterItem extends React.PureComponent<Props, State> {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    margin: 5,
+    borderRadius: 5,
+  },
+  backgroundSelected: {
+    borderRadius: 5,
+    backgroundColor: Colors.primary,
+  },
+  backgroundNormal: {
+    borderRadius: 5,
+    backgroundColor: Colors.lighter,
+  },
   filterButtonSelected: {
     paddingVertical: 5,
     paddingHorizontal: 10,

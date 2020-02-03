@@ -6,12 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
+import androidx.annotation.NonNull
+import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import pl.ddudek.mvxrnexample.R
 import pl.ddudek.mvxrnexample.databinding.ViewExpenseDetailsBinding
 import pl.ddudek.mvxrnexample.networking.API_URL
 import pl.ddudek.mvxrnexample.view.common.ObservableBaseViewImpl
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class ExpenseDetailsViewImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) :
         ExpenseDetailsView, ObservableBaseViewImpl<ExpenseDetailsView.ViewListener>() {
@@ -101,5 +107,16 @@ class ExpenseDetailsViewImpl(layoutInflater: LayoutInflater, parent: ViewGroup?)
         fun onSaveClicked(view: View)
         fun onCancelClicked(view: View)
         fun onAddReceiptClicked(view: View)
+    }
+}
+
+@BindingAdapter("bindDate")
+fun bindDate(@NonNull textView: TextView?, date: String?) {
+    date?.let {
+        val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        serverFormat.timeZone = TimeZone.getTimeZone("GMT");
+        val presentationFormat = SimpleDateFormat("dd.MM.yyyy H:mma", Locale.getDefault())
+        val text = presentationFormat.format(serverFormat.parse(date))
+        textView?.text = text
     }
 }
