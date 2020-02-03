@@ -5,8 +5,16 @@ Business logic and networking implemented in Android.
 
 What was the goal of this approach:
 - Exchangable view implementation (android / react-native) without changing business logic
+- Domain model is separated from networking with mappers
 - Views are completely passive
 - All layers should be unit testable
+
+## Code structure (packages):
+- networking - contains retrofit service, networking model
+- usecase - contain business logic contained in use case classes
+- view/\<feature\>/*Presenter - contains presentation layer logic
+- view/\<feature\>/*View and *ViewImpl - contains passive view interface and implementation
+- view/\<feature\>/*Activity - just an aggregator and lifecycle owner for above classes
 
 Added two unit test classes for test examples:
 GetFilteredExpenseListUseCaseTest.kt
