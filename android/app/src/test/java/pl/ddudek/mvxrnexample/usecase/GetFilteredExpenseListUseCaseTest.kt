@@ -49,7 +49,6 @@ class GetFilteredExpenseListUseCaseTest {
                 .run(GetFilteredExpenseListUseCase.NO_FILTER, GetFilteredExpenseListUseCase.NO_FILTER)
                 .test()
 
-
         //then
         testObserver.awaitTerminalEvent()
         testObserver
