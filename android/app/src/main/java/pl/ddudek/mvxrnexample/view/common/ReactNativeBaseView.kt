@@ -11,18 +11,22 @@ import pl.ddudek.mvxrnexample.databinding.ViewRnFragmentBinding
 import pl.ddudek.mvxrnexample.view.common.reactnativebridge.AppReactNativeBridge
 
 
-abstract class ReactNativeBaseView<ViewListenerType, ViewStateType>(
+abstract class ReactNativeBaseView<ViewListenerType: Any, ViewStateType: Any>(
         private val supportFragmentManager: FragmentManager,
         layoutInflater: LayoutInflater,
         bridge: AppReactNativeBridge) :
         ObservableBaseViewImpl<ViewListenerType>() {
 
+    private val fragmentTag = "REACT_FRAGMENT"
     protected var bridge: AppReactNativeBridge = bridge
     private val viewBinding: ViewRnFragmentBinding = DataBindingUtil.inflate(layoutInflater, R.layout.view_rn_fragment, null, false)
     private lateinit var reactFragment: ReactFragment
 
-    open fun onCreated(initialState: ViewStateType?) {
-        initialState?.let { replaceFragment(it) }
+    private lateinit var currentState : ViewStateType
+
+    open fun onCreated(initialState: ViewStateType) {
+        currentState = initialState
+        replaceFragment(initialState)
     }
 
     override fun getRootView(): View {
@@ -30,15 +34,23 @@ abstract class ReactNativeBaseView<ViewListenerType, ViewStateType>(
     }
 
     fun applyViewState(state: ViewStateType) {
-        replaceFragment(state)
+        bridge.sendState(bundleState(state))
+        currentState = state
+    }
+
+    fun getState() : ViewStateType {
+        return currentState
     }
 
     private fun replaceFragment(state: ViewStateType) {
+        val launchOptions = Bundle()
+        launchOptions.putBundle("initialState", bundleState(state))
+
         val transaction = supportFragmentManager.beginTransaction()
         reactFragment = ReactFragment.Builder()
                 .setComponentName(getRNModuleName())
-                .setLaunchOptions(state?.let { bundleState(it) }).build()
-        transaction.replace(R.id.fragment, reactFragment, "REACT_FRAGMENT")
+                .setLaunchOptions(launchOptions).build()
+        transaction.replace(R.id.fragment, reactFragment, fragmentTag)
         transaction.commit()
     }
 

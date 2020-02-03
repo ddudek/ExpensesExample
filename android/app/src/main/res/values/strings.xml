@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">MvxRNExample</string>
+    <string name="app_name">Expenses</string>
+    <string name="expense_list_title">Expenses</string>
     <string name="expense_details_save">Save</string>
     <string name="expense_details_cancel">Cancel</string>
+    <string name="details_comments_label">Comments:</string>
 </resources>

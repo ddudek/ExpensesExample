@@ -4,17 +4,25 @@ import io.reactivex.Single
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import pl.ddudek.mvxrnexample.data.cache.ExpensesMemoryCache
 import pl.ddudek.mvxrnexample.model.Expense
 import pl.ddudek.mvxrnexample.networking.ExpensesApi
+import java.io.File
 import java.util.concurrent.TimeUnit
 
-class AddExpenseReceiptUseCase(val api: ExpensesApi) {
-    fun run(expenseId: String, photoPath: String) : Single<Expense> {
+class AddExpenseReceiptUseCase(val api: ExpensesApi, val cache: ExpensesMemoryCache) {
+    fun run(expenseId: String, photoFile: File) : Single<Expense> {
 
-        val photo = MultipartBody.Part.createFormData("receipt", "receipt.png", RequestBody
-                .create(MediaType.parse("image/png"), photoPath))
+        val uploadFormField = "receipt"
+        val uploadFileName = "receipt.jpg"
+        val mimeType = "image/jpeg"
+        val multipartBody = MultipartBody.Part.createFormData(
+                uploadFormField,
+                uploadFileName, RequestBody
+                .create(MediaType.parse(mimeType), photoFile))
 
-        return api.addReceipt(expenseId, photo)
+        return api.addReceipt(expenseId, multipartBody)
+                .doOnSuccess { cache.invalidate() }
                 .delay(1, TimeUnit.SECONDS)
     }
 }

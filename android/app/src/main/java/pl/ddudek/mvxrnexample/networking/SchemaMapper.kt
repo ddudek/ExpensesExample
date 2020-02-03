@@ -2,10 +2,12 @@ package pl.ddudek.mvxrnexample.networking
 
 import pl.ddudek.mvxrnexample.model.Amount
 import pl.ddudek.mvxrnexample.model.Expense
+import pl.ddudek.mvxrnexample.model.Receipt
 import pl.ddudek.mvxrnexample.model.User
-import pl.ddudek.mvxrnexample.networking.schema.AmountSchema
-import pl.ddudek.mvxrnexample.networking.schema.ExpenseSchema
-import pl.ddudek.mvxrnexample.networking.schema.UserSchema
+import pl.ddudek.mvxrnexample.networking.schema.responses.AmountSchema
+import pl.ddudek.mvxrnexample.networking.schema.responses.ExpenseSchema
+import pl.ddudek.mvxrnexample.networking.schema.responses.ReceiptSchema
+import pl.ddudek.mvxrnexample.networking.schema.responses.UserSchema
 
 fun ExpenseSchema.mapToModel(): Expense {
     return Expense(
@@ -31,5 +33,11 @@ fun AmountSchema.mapToModel(): Amount {
     return Amount(
             currency = this.currency,
             value = this.value
+    )
+}
+
+fun ReceiptSchema.mapToModel(): Receipt {
+    return Receipt(
+            url = this.url
     )
 }

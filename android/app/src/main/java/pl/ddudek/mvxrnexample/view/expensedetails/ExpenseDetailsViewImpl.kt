@@ -6,55 +6,82 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
+import com.bumptech.glide.Glide
 import pl.ddudek.mvxrnexample.R
 import pl.ddudek.mvxrnexample.databinding.ViewExpenseDetailsBinding
+import pl.ddudek.mvxrnexample.networking.API_URL
 import pl.ddudek.mvxrnexample.view.common.ObservableBaseViewImpl
-
 
 class ExpenseDetailsViewImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) :
         ExpenseDetailsView, ObservableBaseViewImpl<ExpenseDetailsView.ViewListener>() {
 
     private val viewBinding: ViewExpenseDetailsBinding = DataBindingUtil.inflate(layoutInflater, R.layout.view_expense_details, parent, false)
 
-    override fun onCreated(initialState: ExpenseDetailsView.ViewState?) {
-        initialState?.let { applyViewState(initialState) }
+    init {
+        setupToolbar()
+    }
+
+    override fun onCreated(initialState: ExpenseDetailsView.ViewState) {
+        applyViewState(initialState)
+        setupViewBindingListener()
+    }
+
+    private fun setupToolbar() {
+        viewBinding.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp)
+        viewBinding.toolbar.setNavigationOnClickListener { viewListeners.forEach { it.onBack() } }
+    }
+
+    private fun setupViewBindingListener() {
         viewBinding.listener = object : ViewBindingListener {
             override fun onEditClicked(view: View) {
-                for(listener in viewListeners) {
-                    listener.onEditClicked()
-                }
-            }
-
-            override fun onSaveClicked(view: View) {
-                for(listener in viewListeners) {
-                    val comment = viewBinding.editText.text.toString()
-                    listener.onSaveCommentClicked(comment)
-                }
+                viewListeners.forEach { it.onEditClicked() }
             }
 
             override fun onCancelClicked(view: View) {
-                for(listener in viewListeners) {
-                    val comment = viewBinding.editText.text.toString()
-                    listener.onCancelEditClicked()
-                }
+                viewListeners.forEach { it.onCancelEditClicked() }
+            }
+
+            override fun onAddReceiptClicked(view: View) {
+                viewListeners.forEach { it.onAddReceiptClicked() }
+            }
+
+            override fun onSaveClicked(view: View) {
+                val comment = viewBinding.editText.text.toString()
+                viewListeners.forEach { it.onSaveCommentClicked(comment) }
             }
         }
-    }
-
-    interface ViewBindingListener {
-        fun onEditClicked(view: View)
-        fun onSaveClicked(view: View)
-        fun onCancelClicked(view: View)
     }
 
     override fun getRootView(): View {
         return viewBinding.root
     }
 
+    override fun getViewState(): ExpenseDetailsView.ViewState {
+        return viewBinding.state!!
+    }
+
     override fun applyViewState(state: ExpenseDetailsView.ViewState) {
+        val prevState = viewBinding.state
         viewBinding.state = state
+        val receiptsChanged = state.expense.receipts != prevState?.expense?.receipts
+        if (receiptsChanged) {
+            updateReceiptImages(state)
+        }
+    }
+
+    private fun updateReceiptImages(state: ExpenseDetailsView.ViewState) {
+        if (state.expense.receipts.isNotEmpty()) {
+            var receipt = state.expense.receipts[0]
+            val fullUrl = API_URL + receipt.url
+            Glide.with(viewBinding.receipt).load(fullUrl).into(viewBinding.receipt)
+        } else {
+            viewBinding.receipt.setImageResource(R.drawable.ic_add_black_64dp)
+        }
+    }
+
+    override fun destroy() {
+        // no op
     }
 
     override fun showEditCommentKeyboard() {
@@ -69,7 +96,10 @@ class ExpenseDetailsViewImpl(layoutInflater: LayoutInflater, parent: ViewGroup?)
         }, 100)
     }
 
-    override fun destroy() {
-        // no op
+    interface ViewBindingListener {
+        fun onEditClicked(view: View)
+        fun onSaveClicked(view: View)
+        fun onCancelClicked(view: View)
+        fun onAddReceiptClicked(view: View)
     }
 }

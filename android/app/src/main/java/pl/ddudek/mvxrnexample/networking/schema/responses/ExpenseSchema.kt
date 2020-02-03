@@ -1,4 +1,4 @@
-package pl.ddudek.mvxrnexample.networking.schema
+package pl.ddudek.mvxrnexample.networking.schema.responses
 
 
 import com.google.gson.annotations.SerializedName
@@ -10,6 +10,6 @@ data class ExpenseSchema(
         @SerializedName("date") val date: String,
         @SerializedName("id") val id: String,
         @SerializedName("merchant") val merchant: String,
-        @SerializedName("receipts") val receipts: List<UserSchema>,
+        @SerializedName("receipts") val receipts: List<ReceiptSchema>,
         @SerializedName("user") val user: UserSchema
 )

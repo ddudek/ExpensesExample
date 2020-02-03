@@ -13,6 +13,6 @@ data class Expense(
         @SerializedName("comment") val comment: String,
         @SerializedName("date") val date: String,
         @SerializedName("merchant") val merchant: String,
-        @SerializedName("receipts") val receipts: List<User>,
+        @SerializedName("receipts") val receipts: List<Receipt>,
         @SerializedName("user") val user: User
 ) : Parcelable

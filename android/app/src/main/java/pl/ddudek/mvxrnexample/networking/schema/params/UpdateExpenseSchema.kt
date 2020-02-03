@@ -1,4 +1,4 @@
-package pl.ddudek.mvxrnexample.networking.schema
+package pl.ddudek.mvxrnexample.networking.schema.params
 
 import com.google.gson.annotations.SerializedName
 

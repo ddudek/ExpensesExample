@@ -1,44 +1,51 @@
 package pl.ddudek.mvxrnexample.view.expenselist
 
-import android.content.Context
 import android.os.Bundle
-import android.view.View
-import com.facebook.react.ReactApplication
-import com.facebook.react.ReactNativeHost
-import com.facebook.react.ReactRootView
-import pl.ddudek.mvxrnexample.view.common.ObservableBaseViewImpl
+import android.view.LayoutInflater
+import androidx.fragment.app.FragmentManager
+import com.facebook.react.bridge.ReadableMap
+import pl.ddudek.mvxrnexample.view.common.ReactNativeBaseView
+import pl.ddudek.mvxrnexample.view.common.reactnativebridge.AppReactNativeBridge
 import pl.ddudek.mvxrnexample.view.expenselist.mapper.mapToBundle
+import pl.ddudek.mvxrnexample.view.expenselist.mapper.mapToExpense
 
-class ExpensesListViewImpl(val context : Context) :
-        ExpensesListView,
-        ObservableBaseViewImpl<ExpensesListView.ViewListener>() {
-    private val view: ReactRootView = ReactRootView(context)
+class ExpensesListViewImpl(fragmentManager: FragmentManager, bridge: AppReactNativeBridge, layoutInflater: LayoutInflater) :
+        ReactNativeBaseView<ExpensesListView.ViewListener, ExpensesListView.ViewState>(fragmentManager, layoutInflater, bridge),
+        ExpensesListView {
 
-    override fun onCreated(initialState: ExpensesListView.ViewState?) {
-        view.startReactApplication(getReactNativeHost()?.reactInstanceManager, "ExpensesList", initialState?.let { bundleState(it) })
+    private val rnBridgeListener = object : AppReactNativeBridge.NativeCallbacksBridgeListener {
+        override fun onExpenseItemClicked(args: ReadableMap) {
+            val expense = args.mapToExpense()
+            viewListeners.forEach { it.onExpenseItemClicked(expense) }
+        }
+
+        override fun onFilterSelected(index: Int) {
+            viewListeners.forEach { it.onFilterSelected(index) }
+        }
+
+        override fun onViewReady() {
+            // needed in case when RN view is reloaded
+            applyViewState(getState())
+        }
     }
 
-    override fun getRootView(): View {
-        return view
-    }
+    override fun getRNModuleName() = "ExpensesList"
 
-    override fun applyViewState(state: ExpensesListView.ViewState) {
-        view.appProperties = bundleState(state)
+    override fun onCreated(initialState: ExpensesListView.ViewState) {
+        super.onCreated(initialState)
+        bridge.registerListener(rnBridgeListener)
     }
 
     override fun destroy() {
-        view.unmountReactApplication()
+        bridge.unregisterListener(rnBridgeListener)
     }
 
-    private fun getReactNativeHost(): ReactNativeHost? {
-        return (context.applicationContext as ReactApplication).reactNativeHost
-    }
-
-    private fun bundleState(state: ExpensesListView.ViewState): Bundle {
+    override fun bundleState(viewState: ExpensesListView.ViewState): Bundle {
         return Bundle().apply {
-            putSerializable("expenses", state.expenses.map { it.mapToBundle() }.toTypedArray())
-            putBoolean("loading", state.loading)
-            putString("error", state.error)
+            putInt("selectedFilter", viewState.selectedFilter)
+            putSerializable("expenses", ArrayList(viewState.expenses.map { it.mapToBundle() }))
+            putBoolean("loading", viewState.loading)
+            putString("error", viewState.error)
         }
     }
 }

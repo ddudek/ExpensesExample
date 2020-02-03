@@ -3,6 +3,7 @@ package pl.ddudek.mvxrnexample.view.expenselist.mapper
 import android.os.Bundle
 import pl.ddudek.mvxrnexample.model.Amount
 import pl.ddudek.mvxrnexample.model.Expense
+import pl.ddudek.mvxrnexample.model.Receipt
 import pl.ddudek.mvxrnexample.model.User
 
 
@@ -14,7 +15,7 @@ fun Expense.mapToBundle(): Bundle {
     bundle.putString("date", date)
     bundle.putString("id", id)
     bundle.putString("merchant", merchant)
-    bundle.putSerializable("receipts", receipts.map { it.mapToBundle() }.toTypedArray())
+    bundle.putSerializable("receipts", ArrayList(receipts.map { it.mapToBundle() }))
     bundle.putBundle("user", user.mapToBundle())
     return bundle
 }
@@ -31,5 +32,11 @@ fun Amount.mapToBundle(): Bundle {
     val bundle = Bundle()
     bundle.putString("currency", currency)
     bundle.putString("value", value)
+    return bundle
+}
+
+fun Receipt.mapToBundle(): Bundle {
+    val bundle = Bundle()
+    bundle.putString("url", url)
     return bundle
 }

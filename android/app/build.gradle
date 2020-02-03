@@ -198,6 +198,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'androidx.databinding:databinding-adapters:3.5.3'
+    implementation 'com.google.android.material:material:1.0.0'
 
     //rx java
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
@@ -208,6 +209,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.1'
 
+    // glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     // react native stuff
     implementation "com.facebook.react:react-native:+" // From node_modules
@@ -231,4 +235,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 repositories {
     mavenCentral()
+    google()
 }

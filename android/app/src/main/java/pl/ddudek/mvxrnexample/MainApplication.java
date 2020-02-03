@@ -17,7 +17,7 @@ import pl.ddudek.mvxrnexample.view.common.reactnativebridge.AppReactNativeBridge
 
 public class MainApplication extends Application implements ReactApplication {
 
-    private ApplicationComponent appComponent = new ApplicationComponent();
+    private ApplicationComponent appComponent;
 
     private final ReactNativeHost mReactNativeHost =
             new ReactNativeHost(this) {
@@ -30,7 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
                 protected List<ReactPackage> getPackages() {
                     @SuppressWarnings("UnnecessaryLocalVariable")
                     List<ReactPackage> packages = new PackageList(this).getPackages();
-                    packages.add(new AppReactNativeBridgePackage(appComponent.getBridgeCallbackListeners()));
+                    packages.add(new AppReactNativeBridgePackage(appComponent.getReactNativeBridge()));
                     return packages;
                 }
 
@@ -50,6 +50,7 @@ public class MainApplication extends Application implements ReactApplication {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
         initializeFlipper(this); // Remove this line if you don't want Flipper enabled
+        appComponent = new ApplicationComponent(mReactNativeHost);
     }
 
     /**

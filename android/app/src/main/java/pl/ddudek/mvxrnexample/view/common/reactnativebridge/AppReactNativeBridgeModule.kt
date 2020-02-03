@@ -14,8 +14,16 @@ class AppReactNativeBridgeModule(context: ReactApplicationContext, bridge: AppRe
 
     @ReactMethod
     fun onExpenseItemClicked(args: ReadableMap) {
-        for (listener in bridge.listeners) {
-            listener.onExpenseItemClicked(args)
-        }
+        bridge.listeners.forEach { it.onExpenseItemClicked(args) }
+    }
+
+    @ReactMethod
+    fun onFilterSelected(index: Int) {
+        bridge.listeners.forEach { it.onFilterSelected(index) }
+    }
+
+    @ReactMethod
+    fun onViewReady() {
+        bridge.listeners.forEach { it.onViewReady() }
     }
 }
