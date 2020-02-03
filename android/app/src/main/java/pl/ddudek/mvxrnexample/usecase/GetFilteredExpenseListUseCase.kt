@@ -34,7 +34,8 @@ class GetFilteredExpenseListUseCase(val api: ExpensesApi, val cache: ExpensesMem
                         return@map it.expenses
                     }
         } else {
-            return Single.just(cache.expenses)
+            val expenses = cache.expenses
+            return Single.just(expenses)
         }
     }
 
