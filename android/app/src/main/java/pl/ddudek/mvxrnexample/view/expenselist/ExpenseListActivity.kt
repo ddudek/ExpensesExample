@@ -3,25 +3,29 @@ package pl.ddudek.mvxrnexample.view.expenselist
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
+import dagger.android.AndroidInjection
 import pl.ddudek.mvxrnexample.MainApplication
 import pl.ddudek.mvxrnexample.data.cache.ExpensesMemoryCache
+import pl.ddudek.mvxrnexample.networking.ExpensesApi
 import pl.ddudek.mvxrnexample.usecase.GetFilteredExpenseListUseCase
 import pl.ddudek.mvxrnexample.usecase.ShouldRefreshExpenseListUseCase
 import pl.ddudek.mvxrnexample.view.Navigator
+import pl.ddudek.mvxrnexample.view.common.reactnativebridge.AppReactNativeBridge
+import javax.inject.Inject
 
 class ExpenseListActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
 
-    private lateinit var view: ExpensesListViewImpl
-    private lateinit var presenter: ExpenseListPresenter
+    @Inject
+    lateinit var view: ExpensesListView
+
+    @Inject
+    lateinit var presenter: ExpenseListPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val appComponent = (applicationContext as MainApplication).appComponent
-        val useCase = GetFilteredExpenseListUseCase(appComponent.api, appComponent.expensesMemoryCache)
-        view = ExpensesListViewImpl(this.supportFragmentManager, appComponent.reactNativeBridge, layoutInflater)
-        val navigator = Navigator(this)
-        presenter = ExpenseListPresenter(useCase, navigator, ShouldRefreshExpenseListUseCase(appComponent.expensesMemoryCache))
+        AndroidInjection.inject(this)
+
         presenter.bindView(view)
         setContentView(view.getRootView())
     }

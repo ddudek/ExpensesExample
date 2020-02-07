@@ -30,4 +30,4 @@ ExpenseDetailsPresenterTest.kt
 - Only android project was implemented, iOS is not in scope of this example
 
 ## TODO:
-* use Dagger2 for dependency injection (should be straight-forward)
+* ~use Dagger2 for dependency injection~

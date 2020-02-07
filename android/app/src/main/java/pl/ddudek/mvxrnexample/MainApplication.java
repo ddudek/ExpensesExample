@@ -9,48 +9,41 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import pl.ddudek.mvxrnexample.di.ApplicationComponent;
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasAndroidInjector;
+import pl.ddudek.mvxrnexample.di.AppComponent;
+import pl.ddudek.mvxrnexample.di.DaggerAppComponent;
 import pl.ddudek.mvxrnexample.view.common.reactnativebridge.AppReactNativeBridgePackage;
 
-public class MainApplication extends Application implements ReactApplication {
+public class MainApplication extends Application implements ReactApplication, HasAndroidInjector {
 
-    private ApplicationComponent appComponent;
+    @Inject
+    DispatchingAndroidInjector<Object> androidInjector;
 
-    private final ReactNativeHost mReactNativeHost =
-            new ReactNativeHost(this) {
-                @Override
-                public boolean getUseDeveloperSupport() {
-                    return BuildConfig.DEBUG;
-                }
+    private AppComponent applicationComponent;
 
-                @Override
-                protected List<ReactPackage> getPackages() {
-                    @SuppressWarnings("UnnecessaryLocalVariable")
-                    List<ReactPackage> packages = new PackageList(this).getPackages();
-                    packages.add(new AppReactNativeBridgePackage(appComponent.getReactNativeBridge()));
-                    return packages;
-                }
-
-                @Override
-                protected String getJSMainModuleName() {
-                    return "index";
-                }
-            };
-
-    @Override
-    public ReactNativeHost getReactNativeHost() {
-        return mReactNativeHost;
-    }
+    private final ReactNativeHost mReactNativeHost = createReactNativeHost();
 
     @Override
     public void onCreate() {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
         initializeFlipper(this); // Remove this line if you don't want Flipper enabled
-        appComponent = new ApplicationComponent(mReactNativeHost);
+
+        applicationComponent = DaggerAppComponent.builder()
+                .application(this)
+                .reactNativeHost(mReactNativeHost)
+                .build();
+
+        applicationComponent.inject(this);
     }
 
     /**
@@ -79,7 +72,36 @@ public class MainApplication extends Application implements ReactApplication {
         }
     }
 
-    public ApplicationComponent getAppComponent() {
-        return appComponent;
+    @NotNull
+    private ReactNativeHost createReactNativeHost() {
+        return new ReactNativeHost(this) {
+            @Override
+            public boolean getUseDeveloperSupport() {
+                return BuildConfig.DEBUG;
+            }
+
+            @Override
+            protected List<ReactPackage> getPackages() {
+                @SuppressWarnings("UnnecessaryLocalVariable")
+                List<ReactPackage> packages = new PackageList(this).getPackages();
+                packages.add(new AppReactNativeBridgePackage(applicationComponent.getAppReactNativeBridge()));
+                return packages;
+            }
+
+            @Override
+            protected String getJSMainModuleName() {
+                return "index";
+            }
+        };
+    }
+
+    @Override
+    public AndroidInjector<Object> androidInjector() {
+        return androidInjector;
+    }
+
+    @Override
+    public ReactNativeHost getReactNativeHost() {
+        return mReactNativeHost;
     }
 }

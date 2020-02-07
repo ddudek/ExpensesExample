@@ -20,7 +20,10 @@ class TakePhotoUtilImpl(val activity: Activity) : TakePhotoUtil {
 
     var currentPhotoPath: String? = null
 
-    var listener: TakePhotoUtil.Listener? = null
+    override var listener: TakePhotoUtil.Listener? = null
+        set(value) {
+            field = value
+        }
 
     override fun takePhoto() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
@@ -48,9 +51,9 @@ class TakePhotoUtilImpl(val activity: Activity) : TakePhotoUtil {
         }
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int) {
         if (requestCode == requestCodeTakeImage && resultCode == AppCompatActivity.RESULT_OK) {
-            currentPhotoPath?.let { listener?.onReceiptPhotoReady(it) }
+            currentPhotoPath?.let { listener?.onPhotoReady(it) }
         }
     }
 
@@ -69,11 +72,11 @@ class TakePhotoUtilImpl(val activity: Activity) : TakePhotoUtil {
         }
     }
 
-    fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(outState: Bundle) {
         currentPhotoPath?.let { outState.putString("currentPhotoPath", it)}
     }
 
-    fun recreateFromSavedInstanceState(bundle: Bundle) {
+    override fun recreateFromSavedInstanceState(bundle: Bundle) {
         currentPhotoPath = bundle.getString("currentPhotoPath", null)
     }
 }

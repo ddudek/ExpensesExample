@@ -57,14 +57,14 @@ class ExpenseDetailsPresenter(
     fun onPhotoReady(photoPath: String) {
         val expenseId = view.getViewState().expense.id
         val photoFile = File(photoPath)
-        updateViewState(view.getViewState().copy(uploadingReceipt = true, uploadingReceiptError = null))
+        setStateUploadingReceipt()
         val disposable = addReceiptUseCase.run(expenseId, photoFile)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ result ->
-                    updateViewState(view.getViewState().copy(expense = result, uploadingReceipt = false, uploadingReceiptError = null))
+                    setExpenseReceiptUpdated(result)
                 }, {
-                    updateViewState(view.getViewState().copy(uploadingReceipt = false, uploadingReceiptError = it.message))
+                    setStateUploadingReceiptFailed(it.message)
                 })
         compositeDisposable.add(disposable)
     }
@@ -75,26 +75,22 @@ class ExpenseDetailsPresenter(
 
     // ---- View listener ----
     override fun onEditClicked() {
-        updateViewState(view.getViewState().copy(isEditing = true))
+        setStateEditingComment()
         view.showEditCommentKeyboard()
     }
 
     override fun onSaveCommentClicked(comment: String) {
         val expenseId = view.getViewState().expense.id
-        updateViewState(view.getViewState().copy(savingComment = true))
+        setStateSavingCommentInProgress()
         val disposable = updateCommentUseCase.run(expenseId = expenseId, comment = comment)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ result ->
-                    updateViewState(view.getViewState().copy(expense = result, isEditing = false, savingComment = false, savingCommentError = null))
+                    setStateSavingCommentSuccess(result)
                 }, {
-                    updateViewState(view.getViewState().copy(isEditing = true, savingComment = false, savingCommentError = it.message))
+                    setStateSavingCommentFailed(it.message)
                 })
         compositeDisposable.add(disposable)
-    }
-
-    override fun onCancelEditClicked() {
-        updateViewState(view.getViewState().copy(isEditing = false, savingComment = false, savingCommentError = null))
     }
 
     override fun onAddReceiptClicked() {
@@ -105,5 +101,38 @@ class ExpenseDetailsPresenter(
         navigator.goBack()
     }
     // ----- End of View Listener ----
+
+
+    private fun setStateUploadingReceiptFailed(message: String?) {
+        updateViewState(view.getViewState().copy(uploadingReceipt = false, uploadingReceiptError = message))
+    }
+
+    private fun setExpenseReceiptUpdated(result: Expense) {
+        updateViewState(view.getViewState().copy(expense = result, uploadingReceipt = false, uploadingReceiptError = null))
+    }
+
+    private fun setStateUploadingReceipt() {
+        updateViewState(view.getViewState().copy(uploadingReceipt = true, uploadingReceiptError = null))
+    }
+
+    private fun setStateEditingComment() {
+        updateViewState(view.getViewState().copy(isEditing = true))
+    }
+
+    private fun setStateSavingCommentFailed(message: String?) {
+        updateViewState(view.getViewState().copy(isEditing = true, savingComment = false, savingCommentError = message))
+    }
+
+    private fun setStateSavingCommentSuccess(result: Expense) {
+        updateViewState(view.getViewState().copy(expense = result, isEditing = false, savingComment = false, savingCommentError = null))
+    }
+
+    private fun setStateSavingCommentInProgress() {
+        updateViewState(view.getViewState().copy(savingComment = true))
+    }
+
+    override fun onCancelEditClicked() {
+        updateViewState(view.getViewState().copy(isEditing = false, savingComment = false, savingCommentError = null))
+    }
 
 }

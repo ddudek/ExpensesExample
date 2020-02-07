@@ -4,18 +4,32 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
+import dagger.android.AndroidInjection
 import pl.ddudek.mvxrnexample.MainApplication
+import pl.ddudek.mvxrnexample.data.cache.ExpensesMemoryCache
 import pl.ddudek.mvxrnexample.model.Expense
+import pl.ddudek.mvxrnexample.networking.ExpensesApi
 import pl.ddudek.mvxrnexample.usecase.AddExpenseReceiptUseCase
 import pl.ddudek.mvxrnexample.usecase.UpdateExpenseCommentUseCase
 import pl.ddudek.mvxrnexample.view.Navigator
 import pl.ddudek.mvxrnexample.view.utils.TakePhotoUtil
 import pl.ddudek.mvxrnexample.view.utils.TakePhotoUtilImpl
+import javax.inject.Inject
 
 class ExpenseDetailsActivity : AppCompatActivity(), TakePhotoUtil.Listener {
 
-    lateinit var takePhotoUtil: TakePhotoUtilImpl
+    @Inject
+    lateinit var cache: ExpensesMemoryCache
+    @Inject
+    lateinit var api: ExpensesApi
+
+    @Inject
+    lateinit var takePhotoUtil: TakePhotoUtil
+
+    @Inject
     lateinit var presenter: ExpenseDetailsPresenter
+
+    @Inject
     lateinit var view: ExpenseDetailsView
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -52,23 +66,10 @@ class ExpenseDetailsActivity : AppCompatActivity(), TakePhotoUtil.Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        takePhotoUtil = TakePhotoUtilImpl(this)
+        AndroidInjection.inject(this)
         takePhotoUtil.listener = this
-
-        // TODO: Dependency injection
-        val appComponent = (applicationContext as MainApplication).appComponent
-
-        view = ExpenseDetailsViewImpl(layoutInflater, null)
-        val updateCommentUseCase = UpdateExpenseCommentUseCase(appComponent.api, appComponent.expensesMemoryCache)
-        val addReceiptUseCase = AddExpenseReceiptUseCase(appComponent.api, appComponent.expensesMemoryCache)
-        val navigator = Navigator(this)
-
-        presenter = ExpenseDetailsPresenter(updateCommentUseCase, addReceiptUseCase, navigator, takePhotoUtil)
         presenter.bindView(view)
-
         setContentView(view.getRootView())
-
         savedInstanceState?.let {
             takePhotoUtil.recreateFromSavedInstanceState(it)
         }
@@ -79,7 +80,7 @@ class ExpenseDetailsActivity : AppCompatActivity(), TakePhotoUtil.Listener {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onReceiptPhotoReady(fullPath: String) {
+    override fun onPhotoReady(fullPath: String) {
         presenter.onPhotoReady(fullPath)
     }
 }
