@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.databinding.BindingAdapter
@@ -13,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import pl.ddudek.mvxrnexample.R
 import pl.ddudek.mvxrnexample.databinding.ViewExpenseDetailsBinding
+import pl.ddudek.mvxrnexample.model.Expense
 import pl.ddudek.mvxrnexample.networking.API_URL
 import pl.ddudek.mvxrnexample.view.common.ObservableBaseViewImpl
 import java.text.SimpleDateFormat
@@ -70,20 +72,6 @@ class ExpenseDetailsViewImpl(layoutInflater: LayoutInflater, parent: ViewGroup?)
     override fun applyViewState(state: ExpenseDetailsView.ViewState) {
         val prevState = viewBinding.state
         viewBinding.state = state
-        val receiptsChanged = state.expense.receipts != prevState?.expense?.receipts
-        if (receiptsChanged) {
-            updateReceiptImages(state)
-        }
-    }
-
-    private fun updateReceiptImages(state: ExpenseDetailsView.ViewState) {
-        if (state.expense.receipts.isNotEmpty()) {
-            var receipt = state.expense.receipts[0]
-            val fullUrl = API_URL + receipt.url
-            Glide.with(viewBinding.receipt).load(fullUrl).into(viewBinding.receipt)
-        } else {
-            viewBinding.receipt.setImageResource(R.drawable.ic_add_black_64dp)
-        }
     }
 
     override fun destroy() {
@@ -118,5 +106,22 @@ fun bindDate(@NonNull textView: TextView?, date: String?) {
         val presentationFormat = SimpleDateFormat("dd.MM.yyyy H:mma", Locale.getDefault())
         val text = presentationFormat.format(serverFormat.parse(date))
         textView?.text = text
+    }
+}
+
+@BindingAdapter("bindReceipt")
+fun bindDate(@NonNull imageView: ImageView?, state: ExpenseDetailsView.ViewState?) {
+    state?.let {
+        if (it.expense.receipts.isNotEmpty()) {
+            var receipt = state.expense.receipts[0]
+            val fullUrl = API_URL + receipt.url
+            Glide.with(imageView!!.context).load(fullUrl).into(imageView)
+        } else {
+            if (!it.uploadingReceipt) {
+                imageView?.setImageResource(R.drawable.ic_add_black_64dp)
+            } else {
+                imageView?.setImageDrawable(null)
+            }
+        }
     }
 }

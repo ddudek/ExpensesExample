@@ -1,6 +1,7 @@
 package pl.ddudek.mvxrnexample.view.expenselist
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.bridge.ReadableMap

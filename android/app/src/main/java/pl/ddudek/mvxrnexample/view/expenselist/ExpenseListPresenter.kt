@@ -92,6 +92,7 @@ class ExpenseListPresenter(
 
     private fun setExpensesLoading(index: Int) {
         view.applyViewState(view.getState().copy(
+                expenses = listOf(),
                 selectedFilter = index,
                 error = null,
                 loading = true

@@ -34,8 +34,8 @@ abstract class ReactNativeBaseView<ViewListenerType: Any, ViewStateType: Any>(
     }
 
     fun applyViewState(state: ViewStateType) {
-        bridge.sendState(bundleState(state))
         currentState = state
+        bridge.sendState(bundleState(state))
     }
 
     fun getState() : ViewStateType {
